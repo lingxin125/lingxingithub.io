@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企业资源导航中心</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00f7ff;
+            --secondary: #0066ff;
+            --dark: #0a192f;
+            --darker: #020c1b;
+            --light: #ccd6f6;
+            --lighter: #e6f1ff;
+            --accent: #ff2d75;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            padding: 20px 0;
+            box-shadow: 0 4px 30px rgba(0, 247, 255, 0.1);
+            position: relative;
+            z-index: 10;
+            border-bottom: 1px solid rgba(0, 247, 255, 0.2);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(0, 247, 255, 0.5);
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            font-size: 32px;
+        }
+        
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(0, 247, 255, 0.3);
+            background-color: rgba(10, 25, 47, 0.8);
+            color: var(--light);
+            font-size: 14px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 247, 255, 0.3);
+        }
+        
+        .search-box i {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 60px 0 40px;
+            position: relative;
+        }
+        
+        .hero h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 247, 255, 0.3);
+        }
+        
+        .hero p {
+            font-size: 18px;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            color: var(--lighter);
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            padding: 12px 25px;
+            margin: 0 10px;
+            cursor: pointer;
+            border-radius: 30px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 247, 255, 0.3);
+            background-color: transparent;
+            color: var(--light);
+        }
+        
+        .tab.active, .tab:hover {
+            background-color: rgba(0, 247, 255, 0.1);
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 247, 255, 0.2);
+        }
+        
+        .categories {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .categories.active {
+            display: block;
+        }
+        
+        .category {
+            margin-bottom: 40px;
+        }
+        
+        .category-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+        }
+        
+        .category-title i {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+        
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .link-card {
+            background: linear-gradient(145deg, rgba(10, 25, 47, 0.8), rgba(2, 12, 27, 0.9));
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 247, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+        
+        .link-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent));
+            z-index: -1;
+            border-radius: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .link-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 247, 255, 0.2);
+            border-color: rgba(0, 247, 255, 0.3);
+        }
+        
+        .link-card:hover::before {
+            opacity: 0.3;
+        }
+        
+        .link-card h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .link-card p {
+            font-size: 14px;
+            color: var(--lighter);
+            margin-bottom: 15px;
+        }
+        
+        .link-card a {
+            display: inline-block;
+            padding: 8px 20px;
+            background-color: rgba(0, 247, 255, 0.1);
+            color: var(--primary);
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 247, 255, 0.3);
+        }
+        
+        .link-card a:hover {
+            background-color: rgba(0, 247, 255, 0.2);
+            box-shadow: 0 0 10px rgba(0, 247, 255, 0.3);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 60px;
+            border-top: 1px solid rgba(0, 247, 255, 0.2);
+            font-size: 14px;
+            color: var(--lighter);
+        }
+        
+        .glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 247, 255, 0.1) 0%, rgba(0, 247, 255, 0) 70%);
+            filter: blur(20px);
+            z-index: -1;
+        }
+        
+        .glow-1 {
+            top: 10%;
+            left: 10%;
+        }
+        
+        .glow-2 {
+            bottom: 10%;
+            right: 10%;
+            background: radial-gradient(circle, rgba(0, 102, 255, 0.1) 0%, rgba(0, 102, 255, 0) 70%);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+            }
+            
+            .logo {
+                margin-bottom: 20px;
+            }
+            
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .tab {
+                margin: 5px 0;
+                width: 80%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+    
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-compass"></i>
+                <span>资源导航中心</span>
+            </div>
+            <div class="search-box">
+                <input type="text" placeholder="搜索网址、产品或服务...">
+                <i class="fas fa-search"></i>
+            </div>
+        </div>
+    </header>
+    
+    <section class="hero">
+        <div class="container">
+            <h1>企业资源导航平台</h1>
+            <p>一站式访问公司所有产品、竞品分析和合作伙伴资源，提高工作效率，促进团队协作</p>
+            
+            <div class="tabs">
+                <div class="tab active" data-tab="internal">内部资源</div>
+                <div class="tab" data-tab="competitors">竞品分析</div>
+                <div class="tab" data-tab="partners">合作伙伴</div>
+                <div class="tab" data-tab="tools">实用工具</div>
+            </div>
+        </div>
+    </section>
+    
+    <main class="container">
+        <div class="categories active" id="internal">
+            <div class="category">
+                <h2 class="category-title"><i class="fas fa-lock"></i> 产品登录</h2>
+                <div class="links-grid">
+                    <div class="link-card">
+                        <h3>核心业务系统</h3>
+                        <p>公司核心业务管理平台，包含订单、客户、财务等模块</p>
+                        <a href="https://www.baidu.com" target="_blank">访问系统</a>
+                    </div>
+                    <div class="link-card">
+                        <h3>CRM客户关系管理</h3>
+                        <p>客户信息管理、销售跟踪和客户服务支持系统</p>
+                        <a href="https://www.baidu.com" target="_blank">访问系统</a>
+                    </div>
+                    <div class="link-card">
+                        <h3>数据分析平台</h3>
+                        <p>业务数据可视化分析和报表生成工具</p>
+                        <a href="https://www.baidu.com" target="_blank">访问系统</a>
+                    </div>
+                    <div class="link-card">
+                        <h3>人力资源系统</h3>
+                        <p>员工信息管理、考勤、薪酬和绩效评估系统</p>
+                        <a href="https://www.baidu.com" target="_blank">访问系统</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="category">
+                <h2 class="category-title"><i class="fas fa-chart-line"></i> 业务报表</h2>
+                <div class="links-grid">
+                    <div class="link-card">
+                        <h3>销售日报</h3>
+                        <p>每日销售数据汇总和分析报表</p>
+                        <a href="https://www.baidu.com" target="_blank">查看报表</a>
+                    </div>
+                    <div class="link-card">
+                        <h3>财务月报</h3>
+                        <p>月度财务状况和经营成果分析</p>
+                        <a href="https://www.baidu.com" target="_blank">查看报表</a>
+                    </div>
+                    <div class="link-card">
+                        <h3>运营看板</h3>
+                        <p>实时运营数据监控和关键指标展示</p>
+                        <a href="https://www.baidu.com" target="_blank">查看报表</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="category">
+                <h2 class="category-title"><i class="fas fa-book"></i> 知识库</h2>
+                <div class="links-grid">
+                    <div class="link-card">
+                        <h3>产品文档</h3>
+                        <p>所有产品的详细使用说明和技术文档</p>
+                        <a href="https://www.baidu.com" target="_blank">访问文档</a>
+                    </div>
+                    <div class="link-card">
+                        <h3>流程手册</h3>
+                        <p>公司各项业务流程和操作规范</p>
+                        <a href="https://www.baidu.com" target="_blank">访问手册</a>
+                    </div>
+                    <div class="link-card">
+                        <h3>培训资料</h3>
+                        <p>员工培训课程和相关学习资料</p>
+                        <a href="https://www.baidu.com" target="_blank">访问资料</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="categories" id="competitors">
+            <div class="category">
+                <h2 class="category-title"><i class="fas fa-search-dollar"></i> 直接竞品</h2>
+                <div class="links-grid">
+                    <div class="link-card">
+                        <h3>竞品A</h3>
+                        <p>主要竞争对手A的产品和服务信息</p>
+                        <a href="https://www.baidu.com" target="_blank">访问网站</a>
+                    </div>
+                    <div class="link-card">
+                        <h3>竞品B</h3>
+                        <p>主要竞争对手B的产品和服务信息</p>
+                        <a href="https://www.baidu.com" target="_blank">访问网站</a>
+                    </div>
+                    <div class="link-card">
+                        <h3>竞品C</h3>
+                        <p>主要竞争对手C的产品和服务信息</p>
+                        <a href="https://www.baidu.com" target="_blank">访问网站</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="category">
+                <h2 class="category-title"><i class="fas fa-chart-bar"></i> 竞品分析</h2>
+                <div class="links-grid">
+                    <div class="link-card">
+                        <h3>功能对比</h3>
+                        <p>我们产品与竞品的功能对比分析</p>
+                        <a href="https://www.baidu.com" target="_blank">查看分析</a>
+                    </div>
+                    <div class="link-card">
+                        <h3>价格对比</h3>
+                        <p>我们产品与竞品的价格策略对比</p>
+                        <a href="https://www.baidu.com" target="_blank">查看分析</a>
+                    </div>
+                    <div class="link-card">
+                        <h3>市场占有率</h3>
+                        <p>各竞品在目标市场的占有率数据</p>
+                        <a href="https://www.baidu.com" target="_blank">查看数据</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="categories" id="partners">
+            <div class="category">
+                <h2 class="category-title"><i class="fas fa-handshake"></i> 战略合作伙伴</h2>
+                <div class="links-grid">
+                    <div class="link-card">
+                        <h3>云服务提供商</h3>
+                        <p>我们的云计算基础设施合作伙伴</p>
+                        <a href="https://www.baidu.com" target="_blank">访问网站</a>
+                    </div>
+                    <div class="link-card">
+                        <h3>支付网关</h3>
+                        <p>集成的在线支付解决方案提供商</p>
+                        <a href="https://www.baidu.com" target="_blank">访问网站</a>
+                    </div>
+                    <div class="link-card">
+                        <h3>物流服务</h3>
+                        <p>合作的物流和配送服务提供商</p>
+                        <a href="https://www.baidu.com" target="_blank">访问网站</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="category">
+                <h2 class="category-title"><i class="fas fa-box-open"></i> 供应商</h2>
+                <div class="links-grid">
+                    <div class="link-card">
+                        <h3>原材料供应商A</h3>
+                        <p>主要原材料供应商A的采购平台</p>
+                        <a href="https://www.baidu.com" target="_blank">访问平台</a>
+                    </div>
+                    <div class="link-card">
+                        <h3>原材料供应商B</h3>
+                        <p>主要原材料供应商B的采购平台</p>
+                        <a href="https://www.baidu.com" target="_blank">访问平台</a>
+                    </div>
+                    <div class="link-card">
+                        <h3>设备供应商</h3>
+                        <p>生产设备和技术支持供应商</p>
+                        <a href="https://www.baidu.com" target="_blank">访问网站</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="categories" id="tools">
+            <div class="category">
+                <h2 class="category-title"><i class="fas fa-tools"></i> 开发工具</h2>
+                <div class="links-grid">
+                    <div class="link-card">
+                        <h3>代码仓库</h3>
+                        <p>公司内部Git代码托管平台</p>
+                        <a href="https://www.baidu.com" target="_blank">访问仓库</a>
+                    </div>
+                    <div class="link-card">
+                        <h3>项目管理</h3>
+                        <p>敏捷开发和项目管理工具</p>
+                        <a href="https://www.baidu.com" target="_blank">访问工具</a>
+                    </div>
+                    <div class="link-card">
+                        <h3>API文档</h3>
+                        <p>公司所有API接口文档中心</p>
+                        <a href="https://www.baidu.com" target="_blank">访问文档</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="category">
+                <h2 class="category-title"><i class="fas fa-file-alt"></i> 办公工具</h2>
+                <div class="links-grid">
+                    <div class="link-card">
+                        <h3>企业邮箱</h3>
+                        <p>公司企业邮箱登录入口</p>
+                        <a href="https://www.baidu.com" target="_blank">登录邮箱</a>
+                    </div>
+                    <div class="link-card">
+                        <h3>在线会议</h3>
+                        <p>视频会议和远程协作工具</p>
+                        <a href="https://www.baidu.com" target="_blank">进入会议</a>
+                    </div>
+                    <div class="link-card">
+                        <h3>文件共享</h3>
+                        <p>公司内部文件共享和协作平台</p>
+                        <a href="https://www.baidu.com" target="_blank">访问平台</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="category">
+                <h2 class="category-title"><i class="fas fa-chart-pie"></i> 数据分析</h2>
+                <div class="links-grid">
+                    <div class="link-card">
+                        <h3>BI工具</h3>
+                        <p>商业智能和数据分析平台</p>
+                        <a href="https://www.baidu.com" target="_blank">访问工具</a>
+                    </div>
+                    <div class="link-card">
+                        <h3>用户行为分析</h3>
+                        <p>网站和APP用户行为分析工具</p>
+                        <a href="https://www.baidu.com" target="_blank">访问工具</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>© 2023 企业资源导航中心 | 为提升工作效率而生</p>
+            <p>如有任何问题或建议，请联系IT支持团队</p>
+        </div>
+    </footer>
+    
+    <script>
+        // 标签切换功能
+        const tabs = document.querySelectorAll('.tab');
+        const categories = document.querySelectorAll('.categories');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 移除所有active类
+                tabs.forEach(t => t.classList.remove('active'));
+                categories.forEach(c => c.classList.remove('active'));
+                
+                // 添加active类到当前标签和对应内容
+                tab.classList.add('active');
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // 搜索功能
+        const searchInput = document.querySelector('.search-box input');
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            categories.forEach(category => {
+                const cards = category.querySelectorAll('.link-card');
+                let hasVisibleCards = false;
+                
+                cards.forEach(card => {
+                    const title = card.querySelector('h3').textContent.toLowerCase();
+                    const desc = card.querySelector('p').textContent.toLowerCase();
+                    
+                    if (title.includes(searchTerm) || desc.includes(searchTerm)) {
+                        card.style.display = 'block';
+                        hasVisibleCards = true;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                // 如果没有可见卡片，隐藏整个分类
+                const categoryTitle = category.querySelector('.category-title');
+                if (categoryTitle) {
+                    categoryTitle.parentElement.style.display = hasVisibleCards ? 'block' : 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
