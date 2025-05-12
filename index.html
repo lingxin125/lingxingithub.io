@@ -3,615 +3,2445 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>聪明付资源导航中心</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>产品经理导航</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #00f7ff;
-            --secondary: #0066ff;
-            --dark: #0a192f;
-            --darker: #020c1b;
-            --light: #ccd6f6;
-            --lighter: #e6f1ff;
-            --accent: #ff2d75;
+            --primary-bg: #f0f4f8;
+            --secondary-bg: #e1e8f0;
+            --card-bg: rgba(225, 232, 240, 0.7);
+            --text-color: #2d3748;
+            --secondary-text: #4a5568;
+            
+            --purple-neon: #7928ca;
+            --blue-neon: #3d84ff;
+            --silver: #64748b;
+            --cyan-neon: #0bc5ea;
+            --pink-neon: #ff36ab;
+            
+            --purple-glow: 0 0 10px rgba(121, 40, 202, 0.3), 0 0 20px rgba(121, 40, 202, 0.2);
+            --blue-glow: 0 0 10px rgba(61, 132, 255, 0.3), 0 0 20px rgba(61, 132, 255, 0.2);
+            --cyan-glow: 0 0 10px rgba(11, 197, 234, 0.3), 0 0 20px rgba(11, 197, 234, 0.2);
+            --card-glow: 0 0 20px rgba(61, 132, 255, 0.15);
+            --purple-border: 1px solid rgba(121, 40, 202, 0.3);
+            --blue-border: 1px solid rgba(61, 132, 255, 0.3);
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
         }
         
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--dark);
-            color: var(--light);
+            background-color: var(--primary-bg);
+            color: var(--text-color);
             line-height: 1.6;
+            position: relative;
             overflow-x: hidden;
         }
         
+        /* 粒子效果容器 */
+        .particles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            background: linear-gradient(45deg, var(--blue-neon), var(--purple-neon));
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 15s linear infinite;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-20vh) scale(1);
+                opacity: 0;
+            }
+        }
+        
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* 闪光线条效果 */
+        .glow-line {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(61, 132, 255, 0), 
+                rgba(61, 132, 255, 0.5), 
+                rgba(61, 132, 255, 0.8), 
+                rgba(61, 132, 255, 0.5), 
+                rgba(61, 132, 255, 0), 
+                transparent);
+            width: 80%;
+            left: 10%;
+            animation: glow-line-animate 8s linear infinite;
+            box-shadow: 0 0 15px rgba(61, 132, 255, 0.3);
+        }
+        
+        @keyframes glow-line-animate {
+            0% {
+                background-position: -200% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
         }
         
         header {
-            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
-            padding: 20px 0;
-            box-shadow: 0 4px 30px rgba(0, 247, 255, 0.1);
             position: relative;
-            z-index: 10;
-            border-bottom: 1px solid rgba(0, 247, 255, 0.2);
+            background: linear-gradient(135deg, rgba(225, 232, 240, 0.95), rgba(235, 225, 245, 0.95));
+            color: var(--text-color);
+            padding: 40px 0;
+            text-align: center;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            border: var(--purple-border);
+            box-shadow: var(--purple-glow);
+            overflow: hidden;
         }
         
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--primary);
-            text-shadow: 0 0 10px rgba(0, 247, 255, 0.5);
-            display: flex;
-            align-items: center;
-        }
-        
-        .logo i {
-            margin-right: 10px;
-            font-size: 32px;
-        }
-        
-        .search-box {
-            position: relative;
-            width: 300px;
-        }
-        
-        .search-box input {
+        /* 添加霓虹发光线条 */
+        .neon-line {
+            position: absolute;
             width: 100%;
-            padding: 12px 20px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--purple-neon), var(--cyan-neon), var(--blue-neon));
+            top: 0;
+            left: 0;
+            box-shadow: 0 0 10px var(--purple-neon);
+        }
+        
+        .neon-line.bottom {
+            top: auto;
+            bottom: 0;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--purple-neon), var(--blue-neon));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(61, 132, 255, 0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--secondary-text);
+            margin-bottom: 25px;
+        }
+        
+        .search-container {
+            max-width: 600px;
+            margin: 20px auto;
+            position: relative;
+        }
+        
+        #search {
+            width: 100%;
+            padding: 14px 20px;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(61, 132, 255, 0.3);
             border-radius: 30px;
-            border: 1px solid rgba(0, 247, 255, 0.3);
-            background-color: rgba(10, 25, 47, 0.8);
-            color: var(--light);
-            font-size: 14px;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
-        }
-        
-        .search-box input:focus {
+            font-size: 16px;
+            color: var(--text-color);
             outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(0, 247, 255, 0.3);
+            transition: all 0.3s;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
         }
         
-        .search-box i {
+        #search:focus {
+            border-color: var(--blue-neon);
+            box-shadow: 0 0 10px rgba(61, 132, 255, 0.3), inset 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .search-icon {
             position: absolute;
             right: 20px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--primary);
-        }
-        
-        .hero {
-            text-align: center;
-            padding: 60px 0 40px;
-            position: relative;
-        }
-        
-        .hero h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 48px;
-            margin-bottom: 20px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(0, 247, 255, 0.3);
-        }
-        
-        .hero p {
-            font-size: 18px;
-            max-width: 700px;
-            margin: 0 auto 30px;
-            color: var(--lighter);
-        }
-        
-        .tabs {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-        
-        .tab {
-            padding: 12px 25px;
-            margin: 0 10px;
-            cursor: pointer;
-            border-radius: 30px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(0, 247, 255, 0.3);
-            background-color: transparent;
-            color: var(--light);
-        }
-        
-        .tab.active, .tab:hover {
-            background-color: rgba(0, 247, 255, 0.1);
-            border-color: var(--primary);
-            color: var(--primary);
-            box-shadow: 0 0 15px rgba(0, 247, 255, 0.2);
+            color: var(--blue-neon);
         }
         
         .categories {
-            display: none;
-            animation: fadeIn 0.5s ease;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 30px;
+            justify-content: center;
         }
         
-        .categories.active {
-            display: block;
+        .category-btn {
+            background-color: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(61, 132, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--secondary-text);
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+            position: relative;
         }
         
-        .category {
+        .category-count {
+            display: inline-block;
+            background: rgba(61, 132, 255, 0.1);
+            color: var(--blue-neon);
+            border-radius: 12px;
+            padding: 2px 8px;
+            font-size: 0.75rem;
+            margin-left: 6px;
+            font-weight: 600;
+        }
+        
+        .category-btn:hover {
+            border-color: var(--blue-neon);
+            color: var(--blue-neon);
+            box-shadow: 0 0 10px rgba(61, 132, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .category-btn.active {
+            background: linear-gradient(135deg, rgba(61, 132, 255, 0.1), rgba(121, 40, 202, 0.1));
+            border-color: var(--blue-neon);
+            color: var(--blue-neon);
+            box-shadow: 0 0 10px rgba(61, 132, 255, 0.3);
+        }
+        
+        .section {
             margin-bottom: 40px;
+            display: none;
         }
         
-        .category-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: var(--primary);
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-header {
             display: flex;
             align-items: center;
-        }
-        
-        .category-title i {
-            margin-right: 10px;
-            font-size: 20px;
-        }
-        
-        .links-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
-        
-        .link-card {
-            background: linear-gradient(145deg, rgba(10, 25, 47, 0.8), rgba(2, 12, 27, 0.9));
-            border-radius: 10px;
-            padding: 20px;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(0, 247, 255, 0.1);
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(61, 132, 255, 0.3);
             position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(5px);
         }
         
-        .link-card::before {
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, rgba(61, 132, 255, 0.1), rgba(121, 40, 202, 0.1));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: var(--blue-neon);
+            font-size: 18px;
+            box-shadow: 0 0 15px rgba(61, 132, 255, 0.2);
+            border: 1px solid rgba(61, 132, 255, 0.3);
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, var(--purple-neon), var(--blue-neon));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(240, 244, 248, 0.8));
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+            position: relative;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(61, 132, 255, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: var(--card-glow);
+            border-color: rgba(61, 132, 255, 0.3);
+        }
+        
+        .card:hover .accent-top {
+            height: 3px;
+            box-shadow: 0 0 10px var(--blue-neon);
+        }
+        
+        .card a {
+            display: block;
+            padding: 25px;
+            color: var(--text-color);
+            text-decoration: none;
+        }
+        
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-color);
+            transition: all 0.3s;
+        }
+        
+        .card:hover .card-title {
+            color: var(--blue-neon);
+        }
+        
+        .card-url {
+            font-size: 0.8rem;
+            color: var(--secondary-text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .accent-top {
+            height: 2px;
+            background: linear-gradient(90deg, var(--blue-neon), var(--purple-neon));
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            transition: all 0.3s;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--blue-neon);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(61, 132, 255, 0.2);
+            border: 1px solid rgba(61, 132, 255, 0.3);
+            transition: all 0.3s;
+            opacity: 0;
+            visibility: hidden;
+            z-index: 100;
+        }
+        
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .back-to-top:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px rgba(61, 132, 255, 0.3);
+        }
+        
+        .subsection {
+            margin-bottom: 30px;
+        }
+        
+        .subsection-title {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: var(--text-color);
+            border-left: 3px solid var(--purple-neon);
+            padding-left: 12px;
+            position: relative;
+        }
+        
+        .subsection-title::after {
             content: '';
             position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent));
-            z-index: -1;
-            border-radius: 12px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .link-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 247, 255, 0.2);
-            border-color: rgba(0, 247, 255, 0.3);
-        }
-        
-        .link-card:hover::before {
-            opacity: 0.3;
-        }
-        
-        .link-card h3 {
-            font-size: 18px;
-            margin-bottom: 10px;
-            color: var(--primary);
-        }
-        
-        .link-card p {
-            font-size: 14px;
-            color: var(--lighter);
-            margin-bottom: 15px;
-        }
-        
-        .link-card a {
-            display: inline-block;
-            padding: 8px 20px;
-            background-color: rgba(0, 247, 255, 0.1);
-            color: var(--primary);
-            border-radius: 5px;
-            text-decoration: none;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(0, 247, 255, 0.3);
-        }
-        
-        .link-card a:hover {
-            background-color: rgba(0, 247, 255, 0.2);
-            box-shadow: 0 0 10px rgba(0, 247, 255, 0.3);
+            width: 100px;
+            height: 1px;
+            background: linear-gradient(90deg, var(--purple-neon), transparent);
+            bottom: -8px;
+            left: 12px;
         }
         
         footer {
             text-align: center;
-            padding: 30px 0;
+            padding: 30px 20px;
             margin-top: 60px;
-            border-top: 1px solid rgba(0, 247, 255, 0.2);
-            font-size: 14px;
-            color: var(--lighter);
+            color: var(--secondary-text);
+            font-size: 0.9rem;
+            position: relative;
+            border-top: 1px solid rgba(61, 132, 255, 0.1);
         }
         
-        .glow {
+        footer::before {
+            content: '';
             position: absolute;
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(0, 247, 255, 0.1) 0%, rgba(0, 247, 255, 0) 70%);
-            filter: blur(20px);
-            z-index: -1;
+            top: 0;
+            left: 50%;
+            width: 200px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--blue-neon), transparent);
+            transform: translateX(-50%);
         }
         
-        .glow-1 {
-            top: 10%;
-            left: 10%;
-        }
-        
-        .glow-2 {
-            bottom: 10%;
-            right: 10%;
-            background: radial-gradient(circle, rgba(0, 102, 255, 0.1) 0%, rgba(0, 102, 255, 0) 70%);
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
+        /* 响应式适配 */
         @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-            }
-            
-            .logo {
-                margin-bottom: 20px;
-            }
-            
-            .hero h1 {
-                font-size: 36px;
-            }
-            
-            .links-grid {
+            .card-grid {
                 grid-template-columns: 1fr;
             }
             
-            .tabs {
-                flex-direction: column;
-                align-items: center;
+            .section-title {
+                font-size: 1.5rem;
             }
             
-            .tab {
-                margin: 5px 0;
-                width: 80%;
+            h1 {
+                font-size: 2.2rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="glow glow-1"></div>
-    <div class="glow glow-2"></div>
-    
-    <header>
-        <div class="container header-content">
-            <div class="logo">
-                <i class="fas fa-compass"></i>
-                <span>资源导航平台</span>
-            </div>
-            <div class="search-box">
-                <input type="text" placeholder="搜索网址、产品或服务...">
-                <i class="fas fa-search"></i>
-            </div>
-        </div>
-    </header>
-    
-    <section class="hero">
-        <div class="container">
-            <h1>聪明付资源导航平台</h1>
-            <p>一站式访问公司所有产品、竞品、合作伙伴以及实用小工具资源，提高工作效率，促进团队协作</p>
+    <div class="particles-container" id="particles"></div>
+    <div class="glow-line" style="top: 20%;"></div>
+    <div class="glow-line" style="top: 60%;"></div>
+
+    <div class="container">
+        <header>
+            <div class="neon-line"></div>
+            <h1>产品经理导航</h1>
+            <p class="subtitle">为产品经理收集优质资源，提高工作效率</p>
             
-            <div class="tabs">
-                <div class="tab active" data-tab="internal">内部资源</div>
-                <div class="tab" data-tab="competitors">竞品资源</div>
-                <div class="tab" data-tab="partners">合作伙伴</div>
-                <div class="tab" data-tab="tools">实用工具</div>
+            <div class="search-container">
+                <input type="text" id="search" placeholder="搜索网站...">
+                <span class="search-icon"><i class="fas fa-search"></i></span>
             </div>
-        </div>
-    </section>
-    
-    <main class="container">
-        <div class="categories active" id="internal">
-            <div class="category">
-                <h2 class="category-title"><i class="fas fa-lock"></i> 产品登录</h2>
-                <div class="links-grid">
-                    <div class="link-card">
-                        <h3>微邮付管理后台（正式）</h3>
-                        <p>公司核心业务管理平台，包含各个机构后台登录地址</p>
-                        <a href="https://test.gdwxyf.com" target="_blank">访问</a>
-                    </div>
-                    <div class="link-card">
-                        <h3>服务开放平台</h3>
-                        <p>微邮付对外服务开放平台，打造开放生态共享支付</p>
-                        <a href="https://app.copotepay.com/admin/login" target="_blank">访问</a>
-                    </div>
-                    <div class="link-card">
-                        <h3>数据分析平台</h3>
-                        <p>业务数据可视化分析和报表生成工具</p>
-                        <a href="http://data.xiangma365.com/login.html?lang=zh" target="_blank">访问</a>
-                    </div>
-                    <div class="link-card">
-                        <h3>人力资源系统</h3>
-                        <p>员工信息管理、考勤、薪酬和绩效评估系统</p>
-                        <a href="https://www.baidu.com" target="_blank">访问</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="category">
-                <h2 class="category-title"><i class="fas fa-chart-line"></i> 业务报表</h2>
-                <div class="links-grid">
-                    <div class="link-card">
-                        <h3>销售日报</h3>
-                        <p>每日销售数据汇总和分析报表</p>
-                        <a href="https://www.baidu.com" target="_blank">访问</a>
-                    </div>
-                    <div class="link-card">
-                        <h3>财务月报</h3>
-                        <p>月度财务状况和经营成果分析</p>
-                        <a href="https://www.baidu.com" target="_blank">访问</a>
-                    </div>
-                    <div class="link-card">
-                        <h3>运营看板</h3>
-                        <p>实时运营数据监控和关键指标展示</p>
-                        <a href="https://www.baidu.com" target="_blank">访问</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="category">
-                <h2 class="category-title"><i class="fas fa-book"></i> 知识库</h2>
-                <div class="links-grid">
-                    <div class="link-card">
-                        <h3>产品文档</h3>
-                        <p>所有产品的详细使用说明和技术文档</p>
-                        <a href="https://www.baidu.com" target="_blank">访问</a>
-                    </div>
-                    <div class="link-card">
-                        <h3>流程手册</h3>
-                        <p>公司各项业务流程和操作规范</p>
-                        <a href="https://www.baidu.com" target="_blank">访问</a>
-                    </div>
-                    <div class="link-card">
-                        <h3>培训资料</h3>
-                        <p>员工培训课程和相关学习资料</p>
-                        <a href="https://www.baidu.com" target="_blank">访问</a>
-                    </div>
-                </div>
-            </div>
+            <div class="neon-line bottom"></div>
+        </header>
+        
+        <div class="categories">
+            <button class="category-btn active" data-target="all">全部<span class="category-count">0</span></button>
+            <button class="category-btn" data-target="community">产品社区<span class="category-count">0</span></button>
+            <button class="category-btn" data-target="design">体验设计<span class="category-count">0</span></button>
+            <button class="category-btn" data-target="knowledge">知识管理<span class="category-count">0</span></button>
+            <button class="category-btn" data-target="efficiency">效率工具<span class="category-count">0</span></button>
+            <button class="category-btn" data-target="report">行业报告<span class="category-count">0</span></button>
+            <button class="category-btn" data-target="data">大数据分析<span class="category-count">0</span></button>
+            <button class="category-btn" data-target="resource">素材资源<span class="category-count">0</span></button>
+            <button class="category-btn" data-target="prototype">原型工具<span class="category-count">0</span></button>
+            <button class="category-btn" data-target="operation">运营工具<span class="category-count">0</span></button>
+            <button class="category-btn" data-target="learning">充电学习<span class="category-count">0</span></button>
+            <button class="category-btn" data-target="ppt">PPT素材<span class="category-count">0</span></button>
+            <button class="category-btn" data-target="media">科技媒体<span class="category-count">0</span></button>
+            <button class="category-btn" data-target="download">资源下载<span class="category-count">0</span></button>
+            <button class="category-btn" data-target="other">其他工具<span class="category-count">0</span></button>
         </div>
         
-        <div class="categories" id="competitors">
-            <div class="category">
-                <h2 class="category-title"><i class="fas fa-search-dollar"></i> 直接竞品</h2>
-                <div class="links-grid">
-                    <div class="link-card">
-                        <h3>竞品A</h3>
-                        <p>主要竞争对手A的产品和服务信息</p>
-                        <a href="https://www.baidu.com" target="_blank">访问</a>
-                    </div>
-                    <div class="link-card">
-                        <h3>竞品B</h3>
-                        <p>主要竞争对手B的产品和服务信息</p>
-                        <a href="https://www.baidu.com" target="_blank">访问</a>
-                    </div>
-                    <div class="link-card">
-                        <h3>竞品C</h3>
-                        <p>主要竞争对手C的产品和服务信息</p>
-                        <a href="https://www.baidu.com" target="_blank">访问</a>
-                    </div>
+        <!-- 产品社区 -->
+        <section class="section active" id="community">
+            <div class="section-header">
+                <div class="section-icon">🏢</div>
+                <h2 class="section-title">产品经理社区</h2>
+            </div>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.pmcaff.com/site/feed" target="_blank">
+                        <h3 class="card-title">PMCAFF</h3>
+                        <p class="card-url">http://www.pmcaff.com/site/feed</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.woshipm.com/" target="_blank">
+                        <h3 class="card-title">人人都是产品经理</h3>
+                        <p class="card-url">http://www.woshipm.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.chanpin100.com/" target="_blank">
+                        <h3 class="card-title">产品100</h3>
+                        <p class="card-url">http://www.chanpin100.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.yixieshi.com/" target="_blank">
+                        <h3 class="card-title">互联网的一些事儿</h3>
+                        <p class="card-url">http://www.yixieshi.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.alibuybuy.com/" target="_blank">
+                        <h3 class="card-title">互联网的那些事</h3>
+                        <p class="card-url">http://www.alibuybuy.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://www.zaodula.com/" target="_blank">
+                        <h3 class="card-title">互联网er的早读课</h3>
+                        <p class="card-url">https://www.zaodula.com/</p>
+                    </a>
                 </div>
             </div>
-            
-            <div class="category">
-                <h2 class="category-title"><i class="fas fa-chart-bar"></i> 竞品分析</h2>
-                <div class="links-grid">
-                    <div class="link-card">
-                        <h3>功能对比</h3>
-                        <p>我们产品与竞品的功能对比分析</p>
-                        <a href="https://www.baidu.com" target="_blank">查看</a>
-                    </div>
-                    <div class="link-card">
-                        <h3>价格对比</h3>
-                        <p>我们产品与竞品的价格策略对比</p>
-                        <a href="https://www.baidu.com" target="_blank">查看</a>
-                    </div>
-                    <div class="link-card">
-                        <h3>市场占有率</h3>
-                        <p>各竞品在目标市场的占有率数据</p>
-                        <a href="https://www.baidu.com" target="_blank">查看</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </section>
         
-        <div class="categories" id="partners">
-            <div class="category">
-                <h2 class="category-title"><i class="fas fa-handshake"></i> 战略合作伙伴</h2>
-                <div class="links-grid">
-                    <div class="link-card">
-                        <h3>云服务提供商</h3>
-                        <p>我们的云计算基础设施合作伙伴</p>
-                        <a href="https://www.baidu.com" target="_blank">访问</a>
-                    </div>
-                    <div class="link-card">
-                        <h3>支付网关</h3>
-                        <p>集成的在线支付解决方案提供商</p>
-                        <a href="https://www.baidu.com" target="_blank">访问</a>
-                    </div>
-                    <div class="link-card">
-                        <h3>物流服务</h3>
-                        <p>合作的物流和配送服务提供商</p>
-                        <a href="https://www.baidu.com" target="_blank">访问</a>
-                    </div>
+        <!-- 体验设计 -->
+        <section class="section active" id="design">
+            <div class="section-header">
+                <div class="section-icon">🎨</div>
+                <h2 class="section-title">体验设计</h2>
+            </div>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.uisdc.com/" target="_blank">
+                        <h3 class="card-title">优设</h3>
+                        <p class="card-url">http://www.uisdc.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.zcool.com.cn/" target="_blank">
+                        <h3 class="card-title">站酷</h3>
+                        <p class="card-url">http://www.zcool.com.cn/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.redocn.com/" target="_blank">
+                        <h3 class="card-title">红动中国</h3>
+                        <p class="card-url">http://www.redocn.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://www.ui.cn/" target="_blank">
+                        <h3 class="card-title">UI中国</h3>
+                        <p class="card-url">https://www.ui.cn/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://cdc.tencent.com/" target="_blank">
+                        <h3 class="card-title">腾讯CDC</h3>
+                        <p class="card-url">http://cdc.tencent.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://isux.tencent.com/" target="_blank">
+                        <h3 class="card-title">腾讯ISUX</h3>
+                        <p class="card-url">http://isux.tencent.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://mxd.tencent.com/" target="_blank">
+                        <h3 class="card-title">腾讯MXD</h3>
+                        <p class="card-url">https://mxd.tencent.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://ued.qq.com/" target="_blank">
+                        <h3 class="card-title">腾讯网UED</h3>
+                        <p class="card-url">http://ued.qq.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://idesign.qq.com/" target="_blank">
+                        <h3 class="card-title">腾讯设计导航</h3>
+                        <p class="card-url">https://idesign.qq.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://fed.taobao.org/" target="_blank">
+                        <h3 class="card-title">淘宝UED</h3>
+                        <p class="card-url">https://fed.taobao.org/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://hao.uisdc.com/" target="_blank">
+                        <h3 class="card-title">SDC设计师网址导航</h3>
+                        <p class="card-url">https://hao.uisdc.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://design.alipay.com/emotion" target="_blank">
+                        <h3 class="card-title">犸良</h3>
+                        <p class="card-url">https://design.alipay.com/emotion</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://luban.aliyun.com/" target="_blank">
+                        <h3 class="card-title">鹿班</h3>
+                        <p class="card-url">https://luban.aliyun.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://chitu.alipay.com/" target="_blank">
+                        <h3 class="card-title">智能物料设计</h3>
+                        <p class="card-url">https://chitu.alipay.com/</p>
+                    </a>
                 </div>
             </div>
-            
-            <div class="category">
-                <h2 class="category-title"><i class="fas fa-box-open"></i> 供应商</h2>
-                <div class="links-grid">
-                    <div class="link-card">
-                        <h3>原材料供应商A</h3>
-                        <p>主要原材料供应商A的采购平台</p>
-                        <a href="https://www.baidu.com" target="_blank">访问</a>
-                    </div>
-                    <div class="link-card">
-                        <h3>原材料供应商B</h3>
-                        <p>主要原材料供应商B的采购平台</p>
-                        <a href="https://www.baidu.com" target="_blank">访问</a>
-                    </div>
-                    <div class="link-card">
-                        <h3>设备供应商</h3>
-                        <p>生产设备和技术支持供应商</p>
-                        <a href="https://www.baidu.com" target="_blank">访问</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </section>
         
-        <div class="categories" id="tools">
-            <div class="category">
-                <h2 class="category-title"><i class="fas fa-tools"></i> 开发工具</h2>
-                <div class="links-grid">
-                    <div class="link-card">
-                        <h3>代码仓库</h3>
-                        <p>公司内部Git代码托管平台</p>
-                        <a href="https://www.baidu.com" target="_blank">访问</a>
+        <!-- 知识管理 -->
+        <section class="section active" id="knowledge">
+            <div class="section-header">
+                <div class="section-icon">📚</div>
+                <h2 class="section-title">知识管理工具</h2>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">在线文档协作</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://shimo.im/" target="_blank">
+                            <h3 class="card-title">石墨文档</h3>
+                            <p class="card-url">https://shimo.im/</p>
+                        </a>
                     </div>
-                    <div class="link-card">
-                        <h3>项目管理</h3>
-                        <p>敏捷开发和项目管理工具</p>
-                        <a href="https://www.baidu.com" target="_blank">访问</a>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://docs.qq.com/" target="_blank">
+                            <h3 class="card-title">腾讯文档</h3>
+                            <p class="card-url">https://docs.qq.com/</p>
+                        </a>
                     </div>
-                    <div class="link-card">
-                        <h3>API文档</h3>
-                        <p>公司所有API接口文档中心</p>
-                        <a href="https://www.baidu.com" target="_blank">访问</a>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.notion.so/" target="_blank">
+                            <h3 class="card-title">Notion</h3>
+                            <p class="card-url">https://www.notion.so/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.yuque.com/" target="_blank">
+                            <h3 class="card-title">语雀</h3>
+                            <p class="card-url">https://www.yuque.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://mubu.com/" target="_blank">
+                            <h3 class="card-title">幕布</h3>
+                            <p class="card-url">https://mubu.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.onenote.com/" target="_blank">
+                            <h3 class="card-title">OneNote</h3>
+                            <p class="card-url">https://www.onenote.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://quip.com/" target="_blank">
+                            <h3 class="card-title">Quip</h3>
+                            <p class="card-url">https://quip.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://trello.com/" target="_blank">
+                            <h3 class="card-title">Trello</h3>
+                            <p class="card-url">https://trello.com/</p>
+                        </a>
                     </div>
                 </div>
             </div>
             
-            <div class="category">
-                <h2 class="category-title"><i class="fas fa-file-alt"></i> 办公工具</h2>
-                <div class="links-grid">
-                    <div class="link-card">
-                        <h3>企业邮箱</h3>
-                        <p>公司企业邮箱登录入口</p>
-                        <a href="https://www.baidu.com" target="_blank">访问</a>
+            <div class="subsection">
+                <h3 class="subsection-title">本地文档</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.yinxiang.com/" target="_blank">
+                            <h3 class="card-title">印象笔记</h3>
+                            <p class="card-url">https://www.yinxiang.com/</p>
+                        </a>
                     </div>
-                    <div class="link-card">
-                        <h3>在线会议</h3>
-                        <p>视频会议和远程协作工具</p>
-                        <a href="https://www.baidu.com" target="_blank">访问</a>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://note.youdao.com/" target="_blank">
+                            <h3 class="card-title">有道云笔记</h3>
+                            <p class="card-url">http://note.youdao.com/</p>
+                        </a>
                     </div>
-                    <div class="link-card">
-                        <h3>文件共享</h3>
-                        <p>公司内部文件共享和协作平台</p>
-                        <a href="https://www.baidu.com" target="_blank">访问</a>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.wiz.cn/" target="_blank">
+                            <h3 class="card-title">为知笔记</h3>
+                            <p class="card-url">https://www.wiz.cn/</p>
+                        </a>
                     </div>
                 </div>
             </div>
             
-            <div class="category">
-                <h2 class="category-title"><i class="fas fa-chart-pie"></i> 数据分析</h2>
-                <div class="links-grid">
-                    <div class="link-card">
-                        <h3>BI工具</h3>
-                        <p>商业智能和数据分析平台</p>
-                        <a href="https://www.baidu.com" target="_blank">访问</a>
-                    </div>
-                    <div class="link-card">
-                        <h3>用户行为分析</h3>
-                        <p>网站和APP用户行为分析工具</p>
-                        <a href="https://www.baidu.com" target="_blank">访问</a>
+            <div class="subsection">
+                <h3 class="subsection-title">数据协作</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.huoban.com/" target="_blank">
+                            <h3 class="card-title">伙伴云表格</h3>
+                            <p class="card-url">https://www.huoban.com/</p>
+                        </a>
                     </div>
                 </div>
             </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">脑图 & 流程图</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.xmind.cn/" target="_blank">
+                            <h3 class="card-title">Xmind</h3>
+                            <p class="card-url">https://www.xmind.cn/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://mindnode.com/" target="_blank">
+                            <h3 class="card-title">MindNode</h3>
+                            <p class="card-url">https://mindnode.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.processon.com/" target="_blank">
+                            <h3 class="card-title">ProcessOn</h3>
+                            <p class="card-url">https://www.processon.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://naotu.baidu.com/" target="_blank">
+                            <h3 class="card-title">百度脑图</h3>
+                            <p class="card-url">https://naotu.baidu.com/</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 效率与项目管理 -->
+        <section class="section active" id="efficiency">
+            <div class="section-header">
+                <div class="section-icon">⚡</div>
+                <h2 class="section-title">效率与项目管理工具</h2>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">效率工具</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://to-do.live.com/tasks/" target="_blank">
+                            <h3 class="card-title">To Do</h3>
+                            <p class="card-url">https://to-do.live.com/tasks/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.rishiqing.com/" target="_blank">
+                            <h3 class="card-title">日事清</h3>
+                            <p class="card-url">https://www.rishiqing.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.notion.so/" target="_blank">
+                            <h3 class="card-title">Notion</h3>
+                            <p class="card-url">https://www.notion.so/</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">项目管理工具</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.tapd.cn/" target="_blank">
+                            <h3 class="card-title">TAPD</h3>
+                            <p class="card-url">https://www.tapd.cn/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://tower.im/" target="_blank">
+                            <h3 class="card-title">Tower</h3>
+                            <p class="card-url">https://tower.im/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.teambition.com/" target="_blank">
+                            <h3 class="card-title">Teambition</h3>
+                            <p class="card-url">https://www.teambition.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://worktile.com/" target="_blank">
+                            <h3 class="card-title">Worktile</h3>
+                            <p class="card-url">https://worktile.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.workflow.is/" target="_blank">
+                            <h3 class="card-title">Workflow</h3>
+                            <p class="card-url">http://www.workflow.is/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.zentao.net/" target="_blank">
+                            <h3 class="card-title">禅道</h3>
+                            <p class="card-url">https://www.zentao.net/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.microsoft.com/" target="_blank">
+                            <h3 class="card-title">Project</h3>
+                            <p class="card-url">https://www.microsoft.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="#" target="_blank">
+                            <h3 class="card-title">SVN</h3>
+                            <p class="card-url">版本控制系统</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 行业报告 -->
+        <section class="section active" id="report">
+            <div class="section-header">
+                <div class="section-icon">📊</div>
+                <h2 class="section-title">行业报告</h2>
+            </div>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.cnbeta.com/" target="_blank">
+                        <h3 class="card-title">CNbeta</h3>
+                        <p class="card-url">http://www.cnbeta.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.analysys.cn/" target="_blank">
+                        <h3 class="card-title">易观智库</h3>
+                        <p class="card-url">http://www.analysys.cn/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.iresearch.com.cn/" target="_blank">
+                        <h3 class="card-title">艾瑞咨询</h3>
+                        <p class="card-url">http://www.iresearch.com.cn/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.ebrun.com/" target="_blank">
+                        <h3 class="card-title">亿邦动力网</h3>
+                        <p class="card-url">http://www.ebrun.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.iwshang.com/Home.html" target="_blank">
+                        <h3 class="card-title">天下网商</h3>
+                        <p class="card-url">http://www.iwshang.com/Home.html</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.infoq.com/cn/" target="_blank">
+                        <h3 class="card-title">InfoQ</h3>
+                        <p class="card-url">http://www.infoq.com/cn/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.36dsj.com/" target="_blank">
+                        <h3 class="card-title">36大数据</h3>
+                        <p class="card-url">http://www.36dsj.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.199it.com/archives/tag/app-annie" target="_blank">
+                        <h3 class="card-title">App Annie</h3>
+                        <p class="card-url">http://www.199it.com/archives/tag/app-annie</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://index.baidu.com/" target="_blank">
+                        <h3 class="card-title">百度指数</h3>
+                        <p class="card-url">http://index.baidu.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://www.cgltzk.vip/" target="_blank">
+                        <h3 class="card-title">菜根智库</h3>
+                        <p class="card-url">https://www.cgltzk.vip/</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 大数据分析 -->
+        <section class="section active" id="data">
+            <div class="section-header">
+                <div class="section-icon">📈</div>
+                <h2 class="section-title">大数据分析</h2>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">公开的数据</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://data.stats.gov.cn/index.htm" target="_blank">
+                            <h3 class="card-title">国家数据</h3>
+                            <p class="card-url">http://data.stats.gov.cn/index.htm</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.ceicdata.com/zh-hans" target="_blank">
+                            <h3 class="card-title">CEIC</h3>
+                            <p class="card-url">http://www.ceicdata.com/zh-hans</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.wind.com.cn/" target="_blank">
+                            <h3 class="card-title">wind（万得）</h3>
+                            <p class="card-url">http://www.wind.com.cn/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.soshoo.com/" target="_blank">
+                            <h3 class="card-title">搜数网</h3>
+                            <p class="card-url">http://www.soshoo.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.tjcn.org/" target="_blank">
+                            <h3 class="card-title">中国统计信息网</h3>
+                            <p class="card-url">http://www.tjcn.org/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://aws.amazon.com/cn/datasets/?nc1=h_ls" target="_blank">
+                            <h3 class="card-title">亚马逊aws</h3>
+                            <p class="card-url">http://aws.amazon.com/cn/datasets/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://figshare.com/" target="_blank">
+                            <h3 class="card-title">figshare</h3>
+                            <p class="card-url">https://figshare.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://github.com/caesar0301/awesome-public-datasets" target="_blank">
+                            <h3 class="card-title">github数据集</h3>
+                            <p class="card-url">https://github.com/caesar0301/awesome-public-datasets</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">数据交易平台</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.youedata.com/" target="_blank">
+                            <h3 class="card-title">优易数据</h3>
+                            <p class="card-url">http://www.youedata.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.datatang.com/" target="_blank">
+                            <h3 class="card-title">数据堂</h3>
+                            <p class="card-url">http://www.datatang.com/</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">网络指数</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://index.baidu.com/" target="_blank">
+                            <h3 class="card-title">百度指数</h3>
+                            <p class="card-url">http://index.baidu.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://alizs.taobao.com/" target="_blank">
+                            <h3 class="card-title">阿里指数</h3>
+                            <p class="card-url">https://alizs.taobao.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.iresearch.com.cn/" target="_blank">
+                            <h3 class="card-title">艾瑞咨询</h3>
+                            <p class="card-url">http://www.iresearch.com.cn/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.umeng.com/" target="_blank">
+                            <h3 class="card-title">友盟指数</h3>
+                            <p class="card-url">http://www.umeng.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://index.iqiyi.com/" target="_blank">
+                            <h3 class="card-title">爱奇艺指数</h3>
+                            <p class="card-url">http://index.iqiyi.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://piaofang.maoyan.com/" target="_blank">
+                            <h3 class="card-title">猫眼专业版</h3>
+                            <p class="card-url">http://piaofang.maoyan.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://qianfan.analysys.cn/" target="_blank">
+                            <h3 class="card-title">易观千帆</h3>
+                            <p class="card-url">https://qianfan.analysys.cn/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.cnbeta.com/" target="_blank">
+                            <h3 class="card-title">CNbeta</h3>
+                            <p class="card-url">https://www.cnbeta.com/</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">网络采集器</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.locoy.com/" target="_blank">
+                            <h3 class="card-title">火车采集器</h3>
+                            <p class="card-url">http://www.locoy.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.bazhuayu.com/" target="_blank">
+                            <h3 class="card-title">八爪鱼</h3>
+                            <p class="card-url">http://www.bazhuayu.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.gooseeker.com/" target="_blank">
+                            <h3 class="card-title">集搜客</h3>
+                            <p class="card-url">http://www.gooseeker.com/</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">第三方数据分析</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.sensorsdata.cn/auto" target="_blank">
+                            <h3 class="card-title">神策数据</h3>
+                            <p class="card-url">https://www.sensorsdata.cn/auto</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://zhugeio.com/" target="_blank">
+                            <h3 class="card-title">诸葛iO</h3>
+                            <p class="card-url">https://zhugeio.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.umeng.com/" target="_blank">
+                            <h3 class="card-title">友盟</h3>
+                            <p class="card-url">http://www.umeng.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.growingio.com/" target="_blank">
+                            <h3 class="card-title">growingIO</h3>
+                            <p class="card-url">https://www.growingio.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://bigdata.163.com/" target="_blank">
+                            <h3 class="card-title">网易大数据</h3>
+                            <p class="card-url">https://bigdata.163.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.googleAnalytics.com" target="_blank">
+                            <h3 class="card-title">GA</h3>
+                            <p class="card-url">http://www.googleAnalytics.com</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.jiguang.cn/" target="_blank">
+                            <h3 class="card-title">极光大数据</h3>
+                            <p class="card-url">https://www.jiguang.cn/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://tongji.baidu.com/web/welcome/login" target="_blank">
+                            <h3 class="card-title">百度统计</h3>
+                            <p class="card-url">https://tongji.baidu.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.talkingdata.com/" target="_blank">
+                            <h3 class="card-title">Talkingdata</h3>
+                            <p class="card-url">https://www.talkingdata.com/</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">App数据</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.qimai.cn/" target="_blank">
+                            <h3 class="card-title">七麦数据</h3>
+                            <p class="card-url">https://www.qimai.cn/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.analysys.cn/" target="_blank">
+                            <h3 class="card-title">易观数据</h3>
+                            <p class="card-url">https://www.analysys.cn/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://mta.qq.com/" target="_blank">
+                            <h3 class="card-title">腾讯移动分析</h3>
+                            <p class="card-url">https://mta.qq.com/</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">小程序数据</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.aldwx.com/" target="_blank">
+                            <h3 class="card-title">阿拉丁小程序统计平台</h3>
+                            <p class="card-url">https://www.aldwx.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.zhiweidata.com/" target="_blank">
+                            <h3 class="card-title">知微数据</h3>
+                            <p class="card-url">http://www.zhiweidata.com/</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">公众号数据平台</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.gsdata.cn/" target="_blank">
+                            <h3 class="card-title">清博指数</h3>
+                            <p class="card-url">http://www.gsdata.cn/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.newrank.cn/" target="_blank">
+                            <h3 class="card-title">新榜</h3>
+                            <p class="card-url">https://www.newrank.cn/</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">其他数据</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.diaochapai.com/" target="_blank">
+                            <h3 class="card-title">调查派</h3>
+                            <p class="card-url">https://www.diaochapai.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.jiankongbao.com/" target="_blank">
+                            <h3 class="card-title">监控宝</h3>
+                            <p class="card-url">https://www.jiankongbao.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.chinawebanalytics.cn/" target="_blank">
+                            <h3 class="card-title">网站分析在中国</h3>
+                            <p class="card-url">http://www.chinawebanalytics.cn/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="#" target="_blank">
+                            <h3 class="card-title">站长报告</h3>
+                            <p class="card-url">站长报告 (通用)</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="#" target="_blank">
+                            <h3 class="card-title">乌云漏洞报告</h3>
+                            <p class="card-url">乌云漏洞报告 (已关闭)</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 图片素材网站 -->
+        <section class="section active" id="resource">
+            <div class="section-header">
+                <div class="section-icon">🖼️</div>
+                <h2 class="section-title">图片素材网站</h2>
+            </div>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.duitang.com/" target="_blank">
+                        <h3 class="card-title">堆糖</h3>
+                        <p class="card-url">http://www.duitang.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://huaban.com/" target="_blank">
+                        <h3 class="card-title">花瓣</h3>
+                        <p class="card-url">http://huaban.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://pixabay.com/" target="_blank">
+                        <h3 class="card-title">Pixabay</h3>
+                        <p class="card-url">https://pixabay.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://www.tumblr.com/register/follow/gif" target="_blank">
+                        <h3 class="card-title">汤不热</h3>
+                        <p class="card-url">https://www.tumblr.com/register/follow/gif</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.nipic.com/index.html" target="_blank">
+                        <h3 class="card-title">昵图网</h3>
+                        <p class="card-url">http://www.nipic.com/index.html</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://www.pexels.com/zh-cn/" target="_blank">
+                        <h3 class="card-title">Pexels</h3>
+                        <p class="card-url">https://www.pexels.com/zh-cn/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://www.vcg.com/" target="_blank">
+                        <h3 class="card-title">视觉中国</h3>
+                        <p class="card-url">https://www.vcg.com/</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 原型与托管工具 -->
+        <section class="section active" id="prototype">
+            <div class="section-header">
+                <div class="section-icon">🔄</div>
+                <h2 class="section-title">原型与托管工具</h2>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">原型工具</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.axure.com/" target="_blank">
+                            <h3 class="card-title">Axure</h3>
+                            <p class="card-url">https://www.axure.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.sketchapp.com/" target="_blank">
+                            <h3 class="card-title">Sketch</h3>
+                            <p class="card-url">https://www.sketchapp.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://free.modao.cc/" target="_blank">
+                            <h3 class="card-title">墨刀</h3>
+                            <p class="card-url">https://free.modao.cc/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.mockplus.cn/" target="_blank">
+                            <h3 class="card-title">Mockplus</h3>
+                            <p class="card-url">https://www.mockplus.cn/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.xiaopiu.com/" target="_blank">
+                            <h3 class="card-title">xiaopiu</h3>
+                            <p class="card-url">https://www.xiaopiu.com/</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">原型托管工具</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://lanhuapp.com/" target="_blank">
+                            <h3 class="card-title">蓝湖</h3>
+                            <p class="card-url">https://lanhuapp.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://axhub.im/desktop/recent" target="_blank">
+                            <h3 class="card-title">Axhub</h3>
+                            <p class="card-url">https://axhub.im/desktop/recent</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.pmdaniu.com/user/flow" target="_blank">
+                            <h3 class="card-title">产品大牛</h3>
+                            <p class="card-url">http://www.pmdaniu.com/user/flow</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">设计稿托管工具</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.figma.com/files/recent" target="_blank">
+                            <h3 class="card-title">Figma</h3>
+                            <p class="card-url">https://www.figma.com/files/recent</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 运营工具 -->
+        <section class="section active" id="operation">
+            <div class="section-header">
+                <div class="section-icon">🚀</div>
+                <h2 class="section-title">运营工具</h2>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">运营导航</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.kaolamedia.com/" target="_blank">
+                            <h3 class="card-title">新媒体运营导航网站</h3>
+                            <p class="card-url">https://www.kaolamedia.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://zan.useidea.com/" target="_blank">
+                            <h3 class="card-title">文案导航</h3>
+                            <p class="card-url">https://zan.useidea.com/</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">排版编辑工具</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.xiguaji.com/Login#/UserBiz/UserBizList" target="_blank">
+                            <h3 class="card-title">西瓜助手</h3>
+                            <p class="card-url">http://www.xiguaji.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://xiumi.us/" target="_blank">
+                            <h3 class="card-title">秀米</h3>
+                            <p class="card-url">http://xiumi.us/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://ipaiban.com/bianji" target="_blank">
+                            <h3 class="card-title">i排版</h3>
+                            <p class="card-url">http://ipaiban.com/bianji</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://xmt.cn/paiban" target="_blank">
+                            <h3 class="card-title">新媒体排版</h3>
+                            <p class="card-url">http://xmt.cn/paiban</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.eqxiu.com/" target="_blank">
+                            <h3 class="card-title">易企秀</h3>
+                            <p class="card-url">http://www.eqxiu.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.rabbitpre.com/" target="_blank">
+                            <h3 class="card-title">兔展</h3>
+                            <p class="card-url">https://www.rabbitpre.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://maka.im/" target="_blank">
+                            <h3 class="card-title">MAKA</h3>
+                            <p class="card-url">http://maka.im/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.chuangkit.com/" target="_blank">
+                            <h3 class="card-title">创客贴</h3>
+                            <p class="card-url">https://www.chuangkit.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.135editor.com/" target="_blank">
+                            <h3 class="card-title">135编辑器</h3>
+                            <p class="card-url">https://www.135editor.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://bj.96weixin.com/" target="_blank">
+                            <h3 class="card-title">96编辑器</h3>
+                            <p class="card-url">https://bj.96weixin.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.ichuye.cn/" target="_blank">
+                            <h3 class="card-title">初页</h3>
+                            <p class="card-url">http://www.ichuye.cn/</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">问卷调查</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.wenjuan.com/new" target="_blank">
+                            <h3 class="card-title">问卷</h3>
+                            <p class="card-url">http://www.wenjuan.com/new</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://jinshuju.net/columbus" target="_blank">
+                            <h3 class="card-title">金数据</h3>
+                            <p class="card-url">https://jinshuju.net/columbus</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://wj.qq.com/" target="_blank">
+                            <h3 class="card-title">腾讯问卷</h3>
+                            <p class="card-url">https://wj.qq.com/</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">其他运营工具</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="#" target="_blank">
+                            <h3 class="card-title">Fiddler</h3>
+                            <p class="card-url">抓包工具</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.xiaobaipan.com/" target="_blank">
+                            <h3 class="card-title">小白盘</h3>
+                            <p class="card-url">https://www.xiaobaipan.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://lb1.binzc.com/h5/superocr/login" target="_blank">
+                            <h3 class="card-title">图片文字识别</h3>
+                            <p class="card-url">https://lb1.binzc.com/h5/superocr/login</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.vjianke.com/" target="_blank">
+                            <h3 class="card-title">剪客</h3>
+                            <p class="card-url">http://www.vjianke.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://cli.im/deqr" target="_blank">
+                            <h3 class="card-title">草料二维码</h3>
+                            <p class="card-url">http://cli.im/deqr</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://xiaomark.com/" target="_blank">
+                            <h3 class="card-title">小码短链</h3>
+                            <p class="card-url">https://xiaomark.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.picdata.cn/picdata/index.php#" target="_blank">
+                            <h3 class="card-title">在线词频云分析工具</h3>
+                            <p class="card-url">http://www.picdata.cn/picdata/index.php</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.grouplus.cn/" target="_blank">
+                            <h3 class="card-title">社群运营</h3>
+                            <p class="card-url">http://www.grouplus.cn/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://smallpdf.com/cn" target="_blank">
+                            <h3 class="card-title">PDF压缩工具</h3>
+                            <p class="card-url">https://smallpdf.com/cn</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.mikecrm.com/" target="_blank">
+                            <h3 class="card-title">麦客</h3>
+                            <p class="card-url">http://www.mikecrm.com/</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 充电学习 -->
+        <section class="section active" id="learning">
+            <div class="section-header">
+                <div class="section-icon">🎓</div>
+                <h2 class="section-title">充电学习</h2>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">综合学习</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.bilibili.com/" target="_blank">
+                            <h3 class="card-title">B站</h3>
+                            <p class="card-url">https://www.bilibili.com/</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">产品学习</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.sanjieke.cn/" target="_blank">
+                            <h3 class="card-title">三节课</h3>
+                            <p class="card-url">https://www.sanjieke.cn/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://time.geekbang.org/column/article/13170" target="_blank">
+                            <h3 class="card-title">极客时间</h3>
+                            <p class="card-url">https://time.geekbang.org/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.hundun.cn/" target="_blank">
+                            <h3 class="card-title">混沌大学</h3>
+                            <p class="card-url">https://www.hundun.cn/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.igetget.com/" target="_blank">
+                            <h3 class="card-title">得到</h3>
+                            <p class="card-url">https://www.igetget.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.imooc.com/" target="_blank">
+                            <h3 class="card-title">慕课网</h3>
+                            <p class="card-url">https://www.imooc.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://open.163.com/cuvocw/" target="_blank">
+                            <h3 class="card-title">网易公开课</h3>
+                            <p class="card-url">https://open.163.com/cuvocw/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://study.163.com/" target="_blank">
+                            <h3 class="card-title">网易云课堂</h3>
+                            <p class="card-url">https://study.163.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://ke.qq.com/" target="_blank">
+                            <h3 class="card-title">腾讯课堂</h3>
+                            <p class="card-url">https://ke.qq.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.qidianla.com/" target="_blank">
+                            <h3 class="card-title">起点学院</h3>
+                            <p class="card-url">https://www.qidianla.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://open.sina.com.cn/" target="_blank">
+                            <h3 class="card-title">新浪公开课</h3>
+                            <p class="card-url">http://open.sina.com.cn/</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">技术学习</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://discourse.codecombat.com/" target="_blank">
+                            <h3 class="card-title">Code Combat</h3>
+                            <p class="card-url">https://discourse.codecombat.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://learn.freecodecamp.one/" target="_blank">
+                            <h3 class="card-title">FreeCodeCamp</h3>
+                            <p class="card-url">https://learn.freecodecamp.one/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.coursera.org/" target="_blank">
+                            <h3 class="card-title">coursera</h3>
+                            <p class="card-url">https://www.coursera.org/</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- PPT素材 -->
+        <section class="section active" id="ppt">
+            <div class="section-header">
+                <div class="section-icon">📝</div>
+                <h2 class="section-title">PPT素材</h2>
+            </div>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://study.qiuyeppt.com/?utm=ppt_brand_1" target="_blank">
+                        <h3 class="card-title">秋叶PPT</h3>
+                        <p class="card-url">https://study.qiuyeppt.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="#" target="_blank">
+                        <h3 class="card-title">旁门左道PPT</h3>
+                        <p class="card-url">公众号&知乎</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://office.msn.com.cn/Template/Home.shtml" target="_blank">
+                        <h3 class="card-title">OfficePLUS</h3>
+                        <p class="card-url">http://office.msn.com.cn/Template/Home.shtml</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.docer.com/" target="_blank">
+                        <h3 class="card-title">稻壳儿</h3>
+                        <p class="card-url">http://www.docer.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.pptmind.com/my?updated=true" target="_blank">
+                        <h3 class="card-title">PPTMind</h3>
+                        <p class="card-url">http://www.pptmind.com/my?updated=true</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.tretars.com/" target="_blank">
+                        <h3 class="card-title">逼格PPT</h3>
+                        <p class="card-url">http://www.tretars.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.pptfans.cn/" target="_blank">
+                        <h3 class="card-title">PPT设计教程网</h3>
+                        <p class="card-url">http://www.pptfans.cn/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.500d.me/" target="_blank">
+                        <h3 class="card-title">五百丁</h3>
+                        <p class="card-url">http://www.500d.me/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.ooopic.com/" target="_blank">
+                        <h3 class="card-title">我图</h3>
+                        <p class="card-url">http://www.ooopic.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.presentationload.com/" target="_blank">
+                        <h3 class="card-title">presentationload</h3>
+                        <p class="card-url">http://www.presentationload.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://www.ppt20.com/" target="_blank">
+                        <h3 class="card-title">变色龙</h3>
+                        <p class="card-url">https://www.ppt20.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.ypppt.com/" target="_blank">
+                        <h3 class="card-title">优品</h3>
+                        <p class="card-url">http://www.ypppt.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.51pptmoban.com/" target="_blank">
+                        <h3 class="card-title">51PPT</h3>
+                        <p class="card-url">http://www.51pptmoban.com/</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 科技媒体 -->
+        <section class="section active" id="media">
+            <div class="section-header">
+                <div class="section-icon">📱</div>
+                <h2 class="section-title">科技媒体</h2>
+            </div>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://www.huxiu.com/" target="_blank">
+                        <h3 class="card-title">虎嗅</h3>
+                        <p class="card-url">https://www.huxiu.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://36kr.com/" target="_blank">
+                        <h3 class="card-title">36氪</h3>
+                        <p class="card-url">https://36kr.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.demo8.com/" target="_blank">
+                        <h3 class="card-title">创业邦</h3>
+                        <p class="card-url">http://www.demo8.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://www.tmtpost.com/" target="_blank">
+                        <h3 class="card-title">钛媒体</h3>
+                        <p class="card-url">https://www.tmtpost.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.geekpark.net/" target="_blank">
+                        <h3 class="card-title">极客公园</h3>
+                        <p class="card-url">http://www.geekpark.net/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://www.ifanr.com/" target="_blank">
+                        <h3 class="card-title">爱范儿</h3>
+                        <p class="card-url">https://www.ifanr.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://sspai.com/" target="_blank">
+                        <h3 class="card-title">少数派</h3>
+                        <p class="card-url">https://sspai.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://www.zealer.com/" target="_blank">
+                        <h3 class="card-title">ZEALER</h3>
+                        <p class="card-url">https://www.zealer.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://zuimeia.com/" target="_blank">
+                        <h3 class="card-title">最美应用</h3>
+                        <p class="card-url">http://zuimeia.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://www.dgtle.com/" target="_blank">
+                        <h3 class="card-title">数字尾巴</h3>
+                        <p class="card-url">https://www.dgtle.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://www.itjuzi.com/" target="_blank">
+                        <h3 class="card-title">IT桔子</h3>
+                        <p class="card-url">https://www.itjuzi.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://knewone.com/" target="_blank">
+                        <h3 class="card-title">knewone</h3>
+                        <p class="card-url">https://knewone.com/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://cn.technode.com/" target="_blank">
+                        <h3 class="card-title">动点</h3>
+                        <p class="card-url">http://cn.technode.com/</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 资源下载 -->
+        <section class="section active" id="download">
+            <div class="section-header">
+                <div class="section-icon">💾</div>
+                <h2 class="section-title">资源下载</h2>
+            </div>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="http://www.iconfont.cn/" target="_blank">
+                        <h3 class="card-title">iconfont</h3>
+                        <p class="card-url">http://www.iconfont.cn/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://modao.cc/square/mtk9b0z2zw5vezru" target="_blank">
+                        <h3 class="card-title">墨刀素材广场</h3>
+                        <p class="card-url">https://modao.cc/square/</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://ant.design/index-cn" target="_blank">
+                        <h3 class="card-title">Ant design</h3>
+                        <p class="card-url">https://ant.design/index-cn</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <div class="accent-top"></div>
+                    <a href="https://element.eleme.cn/#/zh-CN/component/tree" target="_blank">
+                        <h3 class="card-title">Element</h3>
+                        <p class="card-url">https://element.eleme.cn/</p>
+                    </a>
+                </div>
+                                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://www.chanpinban.com/downloads/" target="_blank">
+                            <h3 class="card-title">产品班</h3>
+                            <p class="card-url">http://www.chanpinban.com/downloads/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="#" target="_blank">
+                            <h3 class="card-title">免费软件下载</h3>
+                            <p class="card-url">多用下载</p>
+                        </a>
+                    </div>
+                </div>
+        </section>
+        
+        <!-- 其他工具 -->
+        <section class="section active" id="other">
+            <div class="section-header">
+                <div class="section-icon">🔧</div>
+                <h2 class="section-title">其他工具</h2>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">文件云存储</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://drive.google.com/" target="_blank">
+                            <h3 class="card-title">Google Drive</h3>
+                            <p class="card-url">https://drive.google.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.dropbox.com/" target="_blank">
+                            <h3 class="card-title">Dropbox</h3>
+                            <p class="card-url">https://www.dropbox.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.jianguoyun.com/" target="_blank">
+                            <h3 class="card-title">坚果云</h3>
+                            <p class="card-url">https://www.jianguoyun.com/</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">产品演示</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.yeshen.com/" target="_blank">
+                            <h3 class="card-title">夜神模拟器</h3>
+                            <p class="card-url">https://www.yeshen.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://developer.android.com/studio" target="_blank">
+                            <h3 class="card-title">安卓PC模拟机</h3>
+                            <p class="card-url">https://developer.android.com/studio</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">系统增强工具</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.extendoffice.com/product/office-tab.html" target="_blank">
+                            <h3 class="card-title">OfficeTab</h3>
+                            <p class="card-url">https://www.extendoffice.com/product/office-tab.html</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="http://cn.ejie.me/" target="_blank">
+                            <h3 class="card-title">CLOVER</h3>
+                            <p class="card-url">http://cn.ejie.me/</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">测试工具</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://getfirebug.com/" target="_blank">
+                            <h3 class="card-title">Firebug</h3>
+                            <p class="card-url">https://getfirebug.com/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="#" target="_blank">
+                            <h3 class="card-title">Testcenter</h3>
+                            <p class="card-url">测试中心工具</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.testin.cn/" target="_blank">
+                            <h3 class="card-title">Testin</h3>
+                            <p class="card-url">https://www.testin.cn/</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://wetest.qq.com/" target="_blank">
+                            <h3 class="card-title">腾讯WeTest</h3>
+                            <p class="card-url">https://wetest.qq.com/</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">数据可视化</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://support.microsoft.com/zh-cn/office/excel-%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%963d-%E5%9C%B0%E5%9B%BE-6bd71d8e-aa17-4de4-8752-cdf751f4fcbe" target="_blank">
+                            <h3 class="card-title">Excel三维图表</h3>
+                            <p class="card-url">Excel三维图表</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://support.microsoft.com/zh-cn/office/excel-%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%963d-%E5%9C%B0%E5%9B%BE-6bd71d8e-aa17-4de4-8752-cdf751f4fcbe" target="_blank">
+                            <h3 class="card-title">Excel三维地图</h3>
+                            <p class="card-url">Excel三维地图</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="#" target="_blank">
+                            <h3 class="card-title">BDP工具</h3>
+                            <p class="card-url">Business Date Platform</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">数据挖掘</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="https://www.ibm.com/products/spss-statistics" target="_blank">
+                            <h3 class="card-title">SPSS</h3>
+                            <p class="card-url">https://www.ibm.com/products/spss-statistics</p>
+                        </a>
+                    </div>
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="#" target="_blank">
+                            <h3 class="card-title">Excel</h3>
+                            <p class="card-url">Excel数据分析</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">自动填表工具</h3>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="accent-top"></div>
+                        <a href="#" target="_blank">
+                            <h3 class="card-title">Lastpass</h3>
+                            <p class="card-url">自动填表工具</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="back-to-top">
+            <i class="fas fa-chevron-up"></i>
         </div>
-    </main>
-    
+    </div>
+
     <footer>
-        <div class="container">
-            <p>© 2023 企业资源导航中心 | 为提升工作效率而生</p>
-            <p>如有任何问题或建议，请联系IT支持团队</p>
-        </div>
+        <p>© 2025 产品经理导航 | 为产品经理精心收集优质资源</p>
     </footer>
-    
+
     <script>
-        // 标签切换功能
-        const tabs = document.querySelectorAll('.tab');
-        const categories = document.querySelectorAll('.categories');
-        
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                // 移除所有active类
-                tabs.forEach(t => t.classList.remove('active'));
-                categories.forEach(c => c.classList.remove('active'));
+        // 创建粒子效果
+        function createParticles() {
+            const particles = document.getElementById('particles');
+            const particleCount = window.innerWidth < 768 ? 30 : 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
                 
-                // 添加active类到当前标签和对应内容
-                tab.classList.add('active');
-                const tabId = tab.getAttribute('data-tab');
-                document.getElementById(tabId).classList.add('active');
+                // 随机大小 (1-4px)
+                const size = Math.random() * 3 + 1;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // 随机位置
+                const x = Math.random() * 100;
+                particle.style.left = `${x}%`;
+                particle.style.top = `${window.innerHeight + Math.random() * 100}px`;
+                
+                // 随机动画时长和延迟
+                const duration = Math.random() * 10 + 10; // 10-20秒
+                const delay = Math.random() * 5;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+                
+                particles.appendChild(particle);
+            }
+        }
+        
+        // 初始化粒子
+        createParticles();
+        
+        // 窗口大小改变时重新生成粒子
+        window.addEventListener('resize', () => {
+            const particles = document.getElementById('particles');
+            particles.innerHTML = '';
+            createParticles();
+        });
+        
+        // 计算每个分类的网站数量
+        function updateCategoryCounts() {
+            const categories = document.querySelectorAll('.category-btn');
+            const cards = document.querySelectorAll('.card');
+            const totalCount = cards.length;
+            
+            // 更新"全部"分类的计数
+            const allCategoryBtn = document.querySelector('.category-btn[data-target="all"]');
+            allCategoryBtn.querySelector('.category-count').textContent = totalCount;
+            
+            // 更新每个特定分类的计数
+            categories.forEach(category => {
+                const target = category.getAttribute('data-target');
+                if (target !== 'all') {
+                    const section = document.getElementById(target);
+                    if (section) {
+                        const categoryCards = section.querySelectorAll('.card');
+                        const count = categoryCards.length;
+                        category.querySelector('.category-count').textContent = count;
+                    }
+                }
+            });
+        }
+        
+        // 分类切换功能
+        const categoryButtons = document.querySelectorAll('.category-btn');
+        const sections = document.querySelectorAll('.section');
+        
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const target = button.getAttribute('data-target');
+                
+                // 添加点击波纹效果
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                button.appendChild(ripple);
+                ripple.style.left = '50%';
+                ripple.style.top = '50%';
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+                
+                // 重置按钮状态
+                categoryButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // 显示/隐藏相应区域
+                if (target === 'all') {
+                    sections.forEach(section => section.classList.add('active'));
+                } else {
+                    sections.forEach(section => {
+                        if (section.id === target) {
+                            section.classList.add('active');
+                        } else {
+                            section.classList.remove('active');
+                        }
+                    });
+                }
             });
         });
         
         // 搜索功能
-        const searchInput = document.querySelector('.search-box input');
-        searchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
+        const searchInput = document.getElementById('search');
+        const cards = document.querySelectorAll('.card');
+        
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            let visibleCardsByCategory = {};
             
-            categories.forEach(category => {
-                const cards = category.querySelectorAll('.link-card');
-                let hasVisibleCards = false;
+            // 初始化每个分类的可见卡片计数
+            document.querySelectorAll('.section').forEach(section => {
+                visibleCardsByCategory[section.id] = 0;
+            });
+            
+            // 总可见卡片数量
+            let totalVisibleCards = 0;
+            
+            cards.forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                const url = card.querySelector('.card-url').textContent.toLowerCase();
                 
-                cards.forEach(card => {
-                    const title = card.querySelector('h3').textContent.toLowerCase();
-                    const desc = card.querySelector('p').textContent.toLowerCase();
+                if (title.includes(searchTerm) || url.includes(searchTerm)) {
+                    card.style.display = 'block';
+                    totalVisibleCards++;
                     
-                    if (title.includes(searchTerm) || desc.includes(searchTerm)) {
-                        card.style.display = 'block';
-                        hasVisibleCards = true;
-                    } else {
-                        card.style.display = 'none';
+                    // 找到这个卡片所属的分类并增加计数
+                    let section = card.closest('.section');
+                    if (section) {
+                        visibleCardsByCategory[section.id]++;
                     }
-                });
-                
-                // 如果没有可见卡片，隐藏整个分类
-                const categoryTitle = category.querySelector('.category-title');
-                if (categoryTitle) {
-                    categoryTitle.parentElement.style.display = hasVisibleCards ? 'block' : 'none';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // 更新分类标签上的计数
+            categoryButtons.forEach(button => {
+                const target = button.getAttribute('data-target');
+                if (target === 'all') {
+                    button.querySelector('.category-count').textContent = totalVisibleCards;
+                } else {
+                    button.querySelector('.category-count').textContent = visibleCardsByCategory[target] || 0;
                 }
             });
         });
+        
+        // 卡片悬停发光效果
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                const accent = card.querySelector('.accent-top');
+                accent.style.boxShadow = '0 0 15px var(--blue-neon)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                const accent = card.querySelector('.accent-top');
+                accent.style.boxShadow = 'none';
+            });
+        });
+        
+        // 回到顶部按钮
+        const backToTopButton = document.querySelector('.back-to-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('show');
+            } else {
+                backToTopButton.classList.remove('show');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 添加交互动画CSS
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes pulse {
+                0% { box-shadow: 0 0 5px var(--blue-neon); }
+                50% { box-shadow: 0 0 15px var(--cyan-neon); }
+                100% { box-shadow: 0 0 5px var(--blue-neon); }
+            }
+            
+            .ripple {
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(61, 132, 255, 0.2);
+                transform: translate(-50%, -50%) scale(0);
+                animation: ripple 0.6s linear;
+                pointer-events: none;
+                width: 100px;
+                height: 100px;
+            }
+            
+            @keyframes ripple {
+                0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+                100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // 页面加载完成后更新分类计数
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCategoryCounts();
+        });
+        
+        // 初始调用一次以确保计数显示（因为DOMContentLoaded可能已触发）
+        updateCategoryCounts();
     </script>
 </body>
-</html>
+</html> 
